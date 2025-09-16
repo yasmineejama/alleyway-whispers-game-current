@@ -1,0 +1,223 @@
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Otome Game Design System - Manga Inspired */
+
+@layer base {
+  :root {
+    /* Base colors */
+    --background: 320 25% 97%;
+    --foreground: 340 15% 15%;
+
+    /* Card system */
+    --card: 0 0% 100%;
+    --card-foreground: 340 15% 15%;
+
+    /* Interactive elements */
+    --popover: 0 0% 100%;
+    --popover-foreground: 340 15% 15%;
+
+    /* Primary - Romantic Pink */
+    --primary: 340 75% 65%;
+    --primary-foreground: 0 0% 100%;
+    --primary-soft: 340 45% 85%;
+
+    /* Secondary - Mystical Purple */
+    --secondary: 280 60% 70%;
+    --secondary-foreground: 0 0% 100%;
+    --secondary-soft: 280 35% 90%;
+
+    /* Accent - Magical Gold */
+    --accent: 45 90% 70%;
+    --accent-foreground: 340 15% 15%;
+    --accent-soft: 45 60% 85%;
+
+    /* Fantasy Dark - Demon themes */
+    --fantasy-dark: 270 30% 20%;
+    --fantasy-dark-foreground: 280 20% 85%;
+
+    /* Muted system */
+    --muted: 320 20% 94%;
+    --muted-foreground: 340 10% 45%;
+
+    /* Status colors */
+    --destructive: 0 70% 60%;
+    --destructive-foreground: 0 0% 100%;
+
+    /* UI elements */
+    --border: 320 20% 88%;
+    --input: 320 20% 92%;
+    --ring: 340 75% 65%;
+
+    /* Design system additions */
+    --radius: 0.75rem;
+    
+    /* Gradients */
+    --gradient-romantic: linear-gradient(135deg, hsl(340 75% 75%), hsl(320 65% 80%));
+    --gradient-mystical: linear-gradient(135deg, hsl(280 60% 70%), hsl(260 55% 75%));
+    --gradient-fantasy: linear-gradient(135deg, hsl(270 30% 25%), hsl(290 35% 30%));
+    --gradient-sunset: linear-gradient(135deg, hsl(340 75% 75%), hsl(45 80% 75%));
+    --gradient-ethereal: linear-gradient(180deg, hsl(320 25% 97%), hsl(280 30% 95%));
+
+    /* Shadows */
+    --shadow-soft: 0 4px 20px hsl(340 50% 80% / 0.3);
+    --shadow-romantic: 0 8px 30px hsl(340 75% 65% / 0.4);
+    --shadow-mystical: 0 8px 30px hsl(280 60% 70% / 0.4);
+    --shadow-fantasy: 0 12px 40px hsl(270 30% 20% / 0.6);
+
+    /* Animations */
+    --transition-magical: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-float: transform 0.3s ease-in-out;
+
+    --sidebar-background: 0 0% 98%;
+
+    --sidebar-foreground: 240 5.3% 26.1%;
+
+    --sidebar-primary: 240 5.9% 10%;
+
+    --sidebar-primary-foreground: 0 0% 98%;
+
+    --sidebar-accent: 240 4.8% 95.9%;
+
+    --sidebar-accent-foreground: 240 5.9% 10%;
+
+    --sidebar-border: 220 13% 91%;
+
+    --sidebar-ring: 217.2 91.2% 59.8%;
+  }
+
+  .dark {
+    --background: 222.2 84% 4.9%;
+    --foreground: 210 40% 98%;
+
+    --card: 222.2 84% 4.9%;
+    --card-foreground: 210 40% 98%;
+
+    --popover: 222.2 84% 4.9%;
+    --popover-foreground: 210 40% 98%;
+
+    --primary: 210 40% 98%;
+    --primary-foreground: 222.2 47.4% 11.2%;
+
+    --secondary: 217.2 32.6% 17.5%;
+    --secondary-foreground: 210 40% 98%;
+
+    --muted: 217.2 32.6% 17.5%;
+    --muted-foreground: 215 20.2% 65.1%;
+
+    --accent: 217.2 32.6% 17.5%;
+    --accent-foreground: 210 40% 98%;
+
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 217.2 32.6% 17.5%;
+    --input: 217.2 32.6% 17.5%;
+    --ring: 212.7 26.8% 83.9%;
+    --sidebar-background: 240 5.9% 10%;
+    --sidebar-foreground: 240 4.8% 95.9%;
+    --sidebar-primary: 224.3 76.3% 48%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 240 3.7% 15.9%;
+    --sidebar-accent-foreground: 240 4.8% 95.9%;
+    --sidebar-border: 240 3.7% 15.9%;
+    --sidebar-ring: 217.2 91.2% 59.8%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground font-japanese;
+    background: var(--gradient-ethereal);
+    min-height: 100vh;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-display;
+  }
+}
+
+@layer components {
+  .otome-card {
+    @apply bg-card rounded-2xl border border-border shadow-[var(--shadow-soft)] backdrop-blur-sm;
+    transition: var(--transition-magical);
+  }
+
+  .otome-card:hover {
+    @apply shadow-[var(--shadow-romantic)];
+    transform: translateY(-2px);
+  }
+
+  .gradient-romantic {
+    background: var(--gradient-romantic);
+  }
+
+  .gradient-mystical {
+    background: var(--gradient-mystical);
+  }
+
+  .gradient-fantasy {
+    background: var(--gradient-fantasy);
+  }
+
+  .gradient-sunset {
+    background: var(--gradient-sunset);
+  }
+
+  .text-gradient-romantic {
+    background: var(--gradient-romantic);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .floating {
+    animation: float 3s ease-in-out infinite;
+  }
+
+  @keyframes float {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-10px); }
+  }
+
+  .fade-in {
+    animation: fadeIn 0.6s ease-out;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .character-card {
+    @apply otome-card overflow-hidden relative;
+    transition: var(--transition-magical);
+  }
+
+  .character-card:hover {
+    @apply shadow-[var(--shadow-mystical)];
+    transform: translateY(-4px) scale(1.02);
+  }
+
+  .line-clamp-2 {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .hover\:scale-102:hover {
+    transform: scale(1.02);
+  }
+
+  .hover\:scale-105:hover {
+    transform: scale(1.05);
+  }
+}
