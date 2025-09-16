@@ -8,21 +8,54 @@ import { Sparkles, Play } from "lucide-react";
 
 // Import character images
 import mainCharacterImage from "@/assets/main-character.jpg";
-import weaponsSupplierImage from "@/assets/weapons-supplier.jpg";
-import captainImage from "@/assets/captain.jpg";
-import mysteriousManImage from "@/assets/mysterious-man.jpg";
+import captainLeeImage from "@/assets/captain-lee.jpg";
+import minSupplierImage from "@/assets/min-supplier.jpg";
+import kaiMysteriousImage from "@/assets/kai-mysterious.jpg";
 import portalBgImage from "@/assets/portal-bg.jpg";
 
 const Index = () => {
   const [activeTab, setActiveTab] = useState('story');
   const [currentChapter, setCurrentChapter] = useState(1);
   const [gameStarted, setGameStarted] = useState(false);
+  const [showCharacterSelection, setShowCharacterSelection] = useState(false);
+  const [selectedLoveInterest, setSelectedLoveInterest] = useState<string | null>(null);
+  // Love interest characters for selection
+  const loveInterests = [
+    {
+      id: 'captain-lee',
+      name: 'Captain Lee',
+      title: 'Military Leader',
+      image: captainLeeImage,
+      description: 'A charismatic military captain with unwavering principles and protective instincts. His leadership skills and dedication make him a reliable companion in dangerous situations.',
+      affection: 0,
+      isUnlocked: true,
+    },
+    {
+      id: 'min-supplier',
+      name: 'Min',
+      title: 'The Supplier',
+      image: minSupplierImage,
+      description: 'A resourceful and clever supplier who knows how to get rare items and information. His network runs deep, and his loyalty is earned through trust and shared adventures.',
+      affection: 0,
+      isUnlocked: true,
+    },
+    {
+      id: 'kai-mysterious',
+      name: 'Kai',
+      title: 'The Mysterious Man',
+      image: kaiMysteriousImage,
+      description: 'An enigmatic figure who appears when you least expect it. His mysterious past and otherworldly knowledge make him both intriguing and dangerous to be around.',
+      affection: 0,
+      isUnlocked: true,
+    },
+  ];
+
   const [characters, setCharacters] = useState([
     {
       id: 'weapons-supplier',
       name: 'Marcus',
       title: 'Weapons Supplier',
-      image: weaponsSupplierImage,
+      image: minSupplierImage,
       description: 'Your reliable supplier of enchanted weapons and charms. Easygoing and flirtatious, but his quiet devotion runs deeper than his jokes. Represents the safe, familiar choice—but warns you not to trust outsiders.',
       affection: 15,
       isUnlocked: true,
@@ -32,7 +65,7 @@ const Index = () => {
       id: 'captain',
       name: 'Commander Hayes',
       title: 'Captain of Supernatural Investigation Unit',
-      image: captainImage,
+      image: captainLeeImage,
       description: 'An authoritative law-and-order type from NYC investigating the worldwide spike in demon activity. Pushes you to work "by the book" which clashes with your independence, but his protection comes with structure and control.',
       affection: 10,
       isUnlocked: true,
@@ -42,7 +75,7 @@ const Index = () => {
       id: 'mysterious-man',
       name: '???',
       title: 'Mysterious Savior',
-      image: mysteriousManImage,
+      image: kaiMysteriousImage,
       description: 'A silent, magnetic figure who appears during fights just when you need him most. Disappears before you can question him, but the undeniable chemistry and his uncanny knowledge of your situation is both thrilling and unsettling.',
       affection: 5,
       isUnlocked: true,
@@ -211,6 +244,88 @@ const Index = () => {
     // Handle character interaction
   };
 
+  const handleLoveInterestSelection = (characterId: string) => {
+    setSelectedLoveInterest(characterId);
+    setShowCharacterSelection(false);
+    setGameStarted(true);
+  };
+
+  // Character Selection Screen
+  if (showCharacterSelection) {
+    return (
+      <div className="min-h-screen relative overflow-hidden">
+        {/* Background */}
+        <div 
+          className="absolute inset-0 bg-cover bg-center"
+          style={{ backgroundImage: `url(${portalBgImage})` }}
+        >
+          <div className="absolute inset-0 gradient-fantasy opacity-80" />
+        </div>
+
+        {/* Character Selection */}
+        <div className="relative z-10 flex flex-col items-center justify-center min-h-screen p-8">
+          <div className="text-center mb-12">
+            <h1 className="font-display font-bold text-4xl md:text-6xl text-white mb-4 drop-shadow-lg">
+              Choose Your Love Interest
+            </h1>
+            <p className="text-xl text-white/90 mb-2 max-w-2xl">
+              Select your romantic companion for this mystical journey
+            </p>
+          </div>
+
+          <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+            {loveInterests.map((character) => (
+              <div 
+                key={character.id}
+                className="character-card p-6 max-w-sm cursor-pointer transform hover:scale-105 transition-transform duration-300"
+                onClick={() => handleLoveInterestSelection(character.id)}
+              >
+                <div className="relative">
+                  <div className="aspect-[3/4] rounded-xl overflow-hidden mb-4">
+                    <img 
+                      src={character.image} 
+                      alt={character.name}
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+
+                  <div className="space-y-3 text-center">
+                    <div>
+                      <h3 className="font-display font-semibold text-2xl text-white mb-2">
+                        {character.name}
+                      </h3>
+                      <p className="text-lg text-primary font-medium">{character.title}</p>
+                    </div>
+
+                    <p className="text-sm text-white/80 line-clamp-3">
+                      {character.description}
+                    </p>
+
+                    <Button 
+                      variant="romantic" 
+                      size="lg"
+                      className="w-full mt-4"
+                    >
+                      Choose {character.name}
+                    </Button>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          <Button 
+            variant="ghost" 
+            className="mt-8 text-white/70 hover:text-white"
+            onClick={() => setShowCharacterSelection(false)}
+          >
+            ← Back to Title
+          </Button>
+        </div>
+      </div>
+    );
+  }
+
   if (!gameStarted) {
     return (
       <div className="min-h-screen relative overflow-hidden">
@@ -245,7 +360,7 @@ const Index = () => {
               variant="romantic" 
               size="lg"
               className="text-lg px-8 py-4"
-              onClick={() => setGameStarted(true)}
+              onClick={() => setShowCharacterSelection(true)}
             >
               <Play className="h-5 w-5 mr-2" />
               Begin Your Journey
