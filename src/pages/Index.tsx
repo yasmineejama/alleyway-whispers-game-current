@@ -24,7 +24,7 @@ const Index = () => {
     {
       id: 'captain-lee',
       name: 'Lee',
-      title: 'Captain of the Supernatural Investigation Unit',
+      title: 'Military Leader',
       image: captainLeeImage,
       description: 'Captain of the Supernatural Investigation Unit',
       affection: 0,
