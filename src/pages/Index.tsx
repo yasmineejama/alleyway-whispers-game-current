@@ -23,8 +23,8 @@ const Index = () => {
   const loveInterests = [
     {
       id: 'captain-lee',
-      name: 'Captain Lee',
-      title: 'Military Leader',
+      name: 'Lee',
+      title: 'Captain of the Supernatural Investigation Unit',
       image: captainLeeImage,
       description: 'A charismatic military captain with unwavering principles and protective instincts. His leadership skills and dedication make him a reliable companion in dangerous situations.',
       affection: 0,
@@ -33,7 +33,7 @@ const Index = () => {
     {
       id: 'min-supplier',
       name: 'Min',
-      title: 'The Supplier',
+      title: 'Taoist practitioner who makes and sells supernatural charms, weapons, etc.',
       image: minSupplierImage,
       description: 'A resourceful and clever supplier who knows how to get rare items and information. His network runs deep, and his loyalty is earned through trust and shared adventures.',
       affection: 0,
@@ -41,8 +41,8 @@ const Index = () => {
     },
     {
       id: 'kai-mysterious',
-      name: 'Kai',
-      title: 'The Mysterious Man',
+      name: 'Mysterious Guardian',
+      title: 'A man whose origins are unknown',
       image: kaiMysteriousImage,
       description: 'An enigmatic figure who appears when you least expect it. His mysterious past and otherworldly knowledge make him both intriguing and dangerous to be around.',
       affection: 0,
