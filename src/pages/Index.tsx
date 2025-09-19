@@ -1,8 +1,11 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { GameHeader } from "@/components/GameHeader";
 import { GameMenu } from "@/components/GameMenu";
 import { CharacterCard } from "@/components/CharacterCard";
 import { StorySection } from "@/components/StorySection";
+import { LoadingScreen } from "@/components/LoadingScreen";
+import { CharacterPage } from "@/components/CharacterPage";
+import { DemonBestiary } from "@/components/DemonBestiary";
 import { Button } from "@/components/ui/button";
 import { Sparkles, Play } from "lucide-react";
 
@@ -11,7 +14,8 @@ import mainCharacterImage from "@/assets/main-character.jpg";
 import captainLeeImage from "@/assets/captain-lee.jpg";
 import minSupplierImage from "@/assets/min-supplier.jpg";
 import kaiMysteriousImage from "@/assets/kai-mysterious.jpg";
-import portalBgImage from "@/assets/portal-bg.jpg";
+import brokenSealsBg from "@/assets/broken-seals-bg.jpg";
+import boneDemonImage from "@/assets/bone-demon.jpg";
 
 const Index = () => {
   const [activeTab, setActiveTab] = useState('story');
@@ -19,6 +23,10 @@ const Index = () => {
   const [gameStarted, setGameStarted] = useState(false);
   const [showCharacterSelection, setShowCharacterSelection] = useState(false);
   const [selectedLoveInterest, setSelectedLoveInterest] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [encounteredDemons, setEncounteredDemons] = useState<string[]>([]);
+  const [storyBranch, setStoryBranch] = useState<string>('main'); // For multiple storylines
+  
   // Love interest characters for selection
   const loveInterests = [
     {
@@ -41,8 +49,8 @@ const Index = () => {
     },
     {
       id: 'kai-mysterious',
-      name: 'Mysterious Guardian',
-      title: 'The Mysterious Man',
+      name: 'Kai',
+      title: 'The Mysterious Guardian',
       image: kaiMysteriousImage,
       description: 'A man whose origins are unknown',
       affection: 0,
@@ -52,156 +60,267 @@ const Index = () => {
 
   const [characters, setCharacters] = useState([
     {
-      id: 'weapons-supplier',
-      name: 'Marcus',
-      title: 'Weapons Supplier',
+      id: 'min-supplier',
+      name: 'Min',
+      title: 'Supernatural Weapons Supplier',
       image: minSupplierImage,
-      description: 'Your reliable supplier of enchanted weapons and charms. Easygoing and flirtatious, but his quiet devotion runs deeper than his jokes. Represents the safe, familiar choice—but warns you not to trust outsiders.',
+      description: 'A charismatic Taoist practitioner from Macau who creates and sells supernatural charms and weapons. His broad shoulders and wicked smile hide deeper protective instincts.',
       affection: 15,
       isUnlocked: true,
-      relationship: 'A steady presence who always has your back, but his protective nature might be stifling your independence.'
+      relationship: 'A steady presence who always has your back with both supplies and emotional support.',
+      age: 'Mid-twenties',
+      origin: 'Macau native, half Cantonese/half Portuguese'
     },
     {
-      id: 'captain',
-      name: 'Commander Hayes',
-      title: 'Captain of Supernatural Investigation Unit',
+      id: 'captain-lee',
+      name: 'Captain Lee',
+      title: 'Supernatural Investigation Unit Captain',
       image: captainLeeImage,
-      description: 'An authoritative law-and-order type from NYC investigating the worldwide spike in demon activity. Pushes you to work "by the book" which clashes with your independence, but his protection comes with structure and control.',
+      description: 'A commanding Korean American investigator in his early thirties. Tall and broad-shouldered, he leads the worldwide investigation into demon activity with military precision.',
       affection: 10,
       isUnlocked: true,
-      relationship: 'Professional tension with undeniable chemistry. His way would keep you safe but suffocate your freedom.'
+      relationship: 'Professional tension with undeniable chemistry. His protection comes with structure.',
+      age: 'Early thirties',
+      origin: 'Korean American, NYC-based federal agent'
     },
     {
-      id: 'mysterious-man',
-      name: '???',
-      title: 'Mysterious Savior',
+      id: 'kai-mysterious',
+      name: 'Kai',
+      title: 'Timeless Guardian',
       image: kaiMysteriousImage,
-      description: 'A silent, magnetic figure who appears during fights just when you need him most. Disappears before you can question him, but the undeniable chemistry and his uncanny knowledge of your situation is both thrilling and unsettling.',
+      description: 'A mysterious figure who appears 5,000 years old but looks timeless. East Asian with a handsome face and swimmer\'s build, he appears in your dreams and during critical moments.',
       affection: 5,
       isUnlocked: true,
-      relationship: 'Dangerous attraction. You sense he\'s hiding something, but can\'t help trusting him when he saves your life.'
+      relationship: 'Dangerous attraction. His ancient knowledge and protection come with hidden truths.',
+      age: '5,000 years old (appears timeless)',
+      origin: 'Ancient East Asian entity of unknown origins'
     },
   ]);
 
   const storyContent = {
+    // ACT I: AWAKENING (Chapters 1-6)
     1: {
-      title: "ACT I: The Hunt - Opening Battle",
-      content: "The narrow alley behind Macau's glittering casinos reeks of decay and something far worse. Your silver dagger gleams as you corner the baigujing—its bone-white face contorting into a grotesque smile. 'You think you understand the hunt, little slayer?' it hisses, its voice like grinding glass. 'The chains of the gods grow weak. Soon, your precious world will learn the truth.' You lunge forward, but the demon dissolves into mist, leaving behind only strange, pulsing energy residue and the echo of its cryptic words.",
-      image: portalBgImage,
+      title: "ACT I: Chapter 1 - The Bone Demon's Warning",
+      content: "The narrow alley behind Macau's glittering casinos reeks of decay and something far worse. Your silver dagger gleams as you corner the baigujing—its bone-white face contorting into a grotesque smile. 'You think you understand the hunt, little slayer?' it hisses, its voice like grinding glass. 'The qi lines grow weak. Soon, your precious world will learn the truth about the chains that bind us.' You lunge forward, but the demon dissolves into mist, leaving behind only strange, pulsing energy residue and whispers of forgotten sorrow.",
+      image: brokenSealsBg,
       choices: [
-        { id: 'examine_residue', text: 'Examine the strange energy residue carefully' },
+        { id: 'examine_residue', text: 'Examine the strange qi energy residue carefully' },
         { id: 'chase_demon', text: 'Try to track where the demon went' },
-        { id: 'call_contacts', text: 'Contact your network for information about "chains of the gods"' },
+        { id: 'seek_min', text: 'Go to Min for answers about weakening qi lines' },
       ]
     },
     2: {
-      title: "The Mysterious Savior",
-      content: "Just as you kneel to examine the residue, shadows move at the alley's mouth. Three more baigujing emerge, their bone faces gleaming in the neon light. Your charms are nearly depleted from the first fight. As claws reach for your throat, a figure drops from the fire escape above—silent, precise, deadly. He dispatches two demons before you can blink, his movements almost too fast to follow. When you turn to thank him, piercing dark eyes meet yours for just a moment before he melts back into the shadows. Gone. Like he was never there at all.",
-      image: portalBgImage,
+      title: "Chapter 2 - Kai's First Appearance",
+      content: "As you kneel to examine the residue, shadows move at the alley's mouth. Three more baigujing emerge, their bone faces gleaming in the neon light. Your charms are nearly depleted from the first fight. As claws reach for your throat, a figure drops from above—silent, precise, deadly. He dispatches two demons before you can blink, movements almost too fast to follow. When you turn to thank him, piercing dark eyes meet yours for just a moment. 'The seals are breaking,' he whispers, his voice carrying an otherworldly resonance. 'Trust no one.' Then he melts back into the shadows.",
+      image: brokenSealsBg,
       choices: [
-        { id: 'follow_mysterious', text: 'Try to follow the mysterious man' },
-        { id: 'analyze_fighting', text: 'Analyze his fighting technique - it seemed familiar' },
-        { id: 'focus_mission', text: 'Focus on the mission - you need more supplies first' },
+        { id: 'follow_kai', text: 'Try to follow the mysterious savior' },
+        { id: 'analyze_technique', text: 'Analyze his fighting technique - it seemed ancient' },
+        { id: 'focus_supplies', text: 'Focus on getting more supplies from Min first' },
       ]
     },
     3: {
-      title: "The Weapons Supplier",
-      content: "Marcus's shop smells like sage and old leather. He looks up from polishing a silver blade, that familiar easy grin spreading across his face. 'Let me guess—used up all your entrapment charms on some nasty piece of work?' His tone is light, but you catch the concern in his eyes as he takes in your torn jacket and the energy burns on your hands. 'You know I worry when you come in looking like you've been through a blender, sweetheart. Maybe it's time to consider taking on a partner?' He slides a fresh set of charms across the counter. 'These ones are stronger. But promise me you'll be careful?'",
-      image: portalBgImage,
+      title: "Chapter 3 - Min's Charm Shop",
+      content: "Min's shop smells like sage and old incense. Ancient Taoist talismans hang from every surface, and the air hums with protective qi. He looks up from inscribing a charm, that characteristic wicked grin spreading across his broad shoulders. 'Let me guess—used up all your demon-catching charms on some nasty baigujing?' His Portuguese-accented Cantonese is warm with concern. 'You know I worry when you come in looking like you've been through a blender, querida.' He slides stronger charms across the counter. 'These are infused with genuine Mazu blessings. But something's wrong with the qi flow lately...'",
+      image: brokenSealsBg,
       choices: [
-        { id: 'flirt_marcus', text: 'Flirt back - his concern is sweet' },
-        { id: 'ask_about_chains', text: 'Ask him about "chains of the gods"' },
-        { id: 'keep_professional', text: 'Keep things professional - you need supplies, not complications' },
+        { id: 'flirt_min', text: 'Appreciate his protective concern - and his smile' },
+        { id: 'ask_qi_lines', text: 'Ask him about the disrupted qi lines' },
+        { id: 'professional_only', text: 'Keep things professional - focus on the supplies' },
       ]
     },
     4: {
-      title: "The Captain Arrives",
-      content: "Your apartment building's lobby feels different when you finally drag yourself home. A stranger in a sharp suit leans against the mailboxes, and you instinctively reach for the silver blade at your hip. Then you notice the federal badge glinting under fluorescent lights. 'Easy,' he says, raising his hands slightly. 'Commander Hayes, Supernatural Investigation Unit.' His steel-gray eyes assess you with professional interest. 'You're the demon hunter who's been active in Macau. We need to talk. Demon activity has spiked 400% worldwide in the last month, and whatever you're hunting isn't isolated. My unit is taking point on this investigation.' He straightens, all business. 'The question is: are you going to cooperate, or do I need to make this official?'",
-      image: portalBgImage,
+      title: "Chapter 4 - Captain Lee's Arrival",
+      content: "Your apartment building's lobby feels different when you drag yourself home. A stranger in a sharp federal suit leans against the mailboxes, and you instinctively reach for your silver blade. Then you notice the badge glinting under fluorescent lights. 'Easy,' he says, raising his hands. His voice carries military authority. 'Captain Lee, Supernatural Investigation Unit.' His steel-gray eyes assess you professionally. 'You're the demon hunter active in Macau. We need to talk. Supernatural activity has spiked 400% worldwide in the last month. My unit is taking point.' He straightens to his full, imposing height. 'Question is: are you going to cooperate, or do I make this official?'",
+      image: brokenSealsBg,
       choices: [
-        { id: 'cooperate_hayes', text: 'Agree to cooperate - you need resources' },
-        { id: 'resist_authority', text: 'Resist - you work alone for a reason' },
+        { id: 'cooperate_lee', text: 'Agree to cooperate - you need his resources' },
+        { id: 'resist_authority', text: 'Resist - you work alone for good reasons' },
         { id: 'negotiate_terms', text: 'Negotiate - cooperation, but on your terms' },
       ]
     },
     5: {
-      title: "ACT II: The Pattern - Portal Investigation",
-      content: "Three weeks later, you stand before a shimmering tear in reality beneath the Brooklyn Bridge. This is the seventh portal you've documented across three continents. Each one pulses with the same strange energy you first encountered in Macau. Hayes coordinates his tactical team while Marcus unpacks modified containment charms. 'The pattern is accelerating,' Hayes reports, his voice tight with concern. 'We're seeing manifestations every 48 hours now.' Marcus frowns at his readings. 'The dimensional barriers are weakening faster than we calculated. At this rate...' He doesn't finish, but you all know what he means. The mysterious figure from your dreams warned you this would happen, but seeing it firsthand chills you to the bone.",
-      image: portalBgImage,
+      title: "Chapter 5 - The First Dream",
+      content: "That night, your dreams are unlike any before. You stand in a realm of impossible beauty—ancient Chinese gardens with qi flowing visibly through crystal streams. Kai appears beside you, no longer hiding his otherworldly nature. His presence feels both protective and ancient. 'The gods lied to your ancestors,' he says softly, his hand almost touching yours. 'We were not always demons. Once, we were human—until divine chains transformed love into monstrosity.' In the dream, you see flashes of families torn apart, children screaming as golden chains drag them into darkness. 'The seals are weakening because the prisoners are dying. When they're gone...' You wake with tears on your cheeks.",
+      image: brokenSealsBg,
       choices: [
-        { id: 'focus_research', text: 'Focus on researching the pattern with Marcus' },
-        { id: 'coordinate_hayes', text: 'Work closely with Hayes on tactical approaches' },
-        { id: 'seek_mysterious', text: 'Try to contact the mysterious man from your dreams' },
+        { id: 'trust_dream', text: 'Trust the dream vision - it felt too real to be false' },
+        { id: 'question_dream', text: 'Question everything - dreams can be manipulations' },
+        { id: 'research_history', text: 'Research your family history for clues' },
       ]
     },
     6: {
-      title: "Deeper Bonds",
-      content: "The investigation consumes your days, but it's the quiet moments that reveal who these men really are. Marcus stays up all night researching ancient texts, bringing you coffee at 3 AM with that gentle smile that makes your heart skip. 'Found something,' he whispers, showing you a passage about divine chains. Hayes surprises you by remembering how you take your tea, his stern exterior softening when he thinks you're not looking. 'You don't have to carry this alone,' he says quietly after a particularly brutal demon encounter. And in your dreams, the mysterious man's presence grows stronger, more protective. When you wake, you swear you can still feel his hand in yours. Each man offers something different, but all three are becoming impossible to imagine living without.",
-      image: portalBgImage,
+      title: "Chapter 6 - Building Bonds",
+      content: "The investigation consumes your days, but it's the quiet moments that reveal who these men truly are. Min stays up all night researching ancient texts, bringing you Macanese coffee at 3 AM with that gentle smile. 'Found something about divine seals,' he whispers, showing you a passage in classical Chinese. Captain Lee surprises you by remembering how you take your tea, his stern exterior softening. 'You don't have to carry this alone,' he says after a brutal encounter. In your dreams, Kai's presence grows stronger, more protective. 'Whatever comes,' his dream-voice promises, 'I will not let them harm you.' Each man offers something different, but all three are becoming impossible to imagine living without.",
+      image: brokenSealsBg,
       choices: [
-        { id: 'confide_marcus', text: 'Confide in Marcus about your growing fears' },
-        { id: 'accept_hayes_protection', text: 'Accept Hayes\' offer to stay close during missions' },
-        { id: 'chase_dream_connection', text: 'Try to strengthen your connection with the mysterious man' },
+        { id: 'confide_min', text: 'Confide in Min about your growing fears' },
+        { id: 'accept_lee_protection', text: 'Accept Lee\'s offer to stay close during missions' },
+        { id: 'strengthen_kai_bond', text: 'Try to strengthen your dream connection with Kai' },
       ]
     },
+
+    // ACT II: REVELATION (Chapters 7-16)  
     7: {
-      title: "The Discovery",
-      content: "The breakthrough comes at 4 AM in Marcus's cluttered shop. Ancient texts spread across every surface, Hayes's tactical reports mixed with your own field notes, and the mysterious energy readings that have haunted your dreams finally make sense. 'The portals aren't random,' you breathe, connecting the final pieces. 'They're following ley lines, but in reverse. Someone—or something—is systematically weakening the barriers.' Marcus's eyes widen as he traces the pattern on his map. 'If we combine the ancient sealing charms with Hayes's containment technology...' Hayes leans over your shoulder, his presence warm and solid. 'We could close them. All of them.' For the first time in weeks, hope blooms in your chest. But in the back of your mind, a familiar voice whispers a warning you can't quite remember.",
-      image: portalBgImage,
+      title: "ACT II: Chapter 7 - The Portal Discovery",
+      content: "Three weeks later, you stand before a shimmering tear in reality beneath the Brooklyn Bridge. This is the seventh portal you've documented across three continents. Each pulses with corrupted qi that makes your teeth ache. Captain Lee coordinates his tactical team while Min unpacks modified containment charms. 'The pattern is accelerating,' Lee reports grimly. 'We're seeing manifestations every 48 hours now.' Min frowns at his readings. 'The dimensional barriers are weakening faster than we calculated. If this continues...' A child's cry echoes from within the portal—distinctly human, distinctly terrified.",
+      image: brokenSealsBg,
       choices: [
-        { id: 'plan_sealing', text: 'Begin planning the portal sealing operation' },
-        { id: 'investigate_warning', text: 'Try to remember the warning from your dreams' },
-        { id: 'celebrate_breakthrough', text: 'Take a moment to celebrate this breakthrough' },
+        { id: 'enter_portal', text: 'Insist on entering the portal to investigate' },
+        { id: 'seal_immediately', text: 'Focus on sealing it immediately' },
+        { id: 'study_pattern', text: 'Study the pattern more before acting' },
       ]
     },
     8: {
-      title: "False Victory",
-      content: "The final portal shimmers and collapses with a sound like breaking glass. Around you, the combined forces of Hayes's unit, Marcus's enchanted arsenal, and your own determination have achieved the impossible. The last dimensional tear seals with a brilliant flash, and suddenly the oppressive weight you've carried for months lifts from your shoulders. 'We did it,' Hayes says, disbelief and relief warring in his voice. Marcus pulls you into a fierce hug, spinning you around as his laughter echoes off the warehouse walls. Even the mysterious man appears one last time, a proud smile on his usually serious face before he fades into shadow. The world is safe. The portals are sealed. For the first time since Macau, you allow yourself to imagine a future—and wonder which of these three men might be part of it.",
-      image: portalBgImage,
+      title: "Chapter 8 - Snake Demon's Testimony", 
+      content: "The snake demon you capture doesn't fight—she weeps. In her human form, she's breathtakingly beautiful but fragile, with ancient sadness in her eyes. 'Please,' she whispers in Mandarin, 'I was once like you. I had a name—Lian. I had a family.' Min translates, his usual confidence shaken. She continues: 'The gods came to our village during the Han Dynasty. They said we were 'tainted by demonic qi' but we were just... different. We could see spirits, heal with herbs.' Her form flickers between human and serpentine. 'The golden chains burned away our humanity, left only hunger and rage. But some of us... some of us remember.' Captain Lee's hand moves toward his weapon, but something in her testimony stops him.",
+      image: brokenSealsBg,
       choices: [
-        { id: 'choose_marcus', text: 'Realize your heart belongs with Marcus' },
-        { id: 'choose_hayes', text: 'Acknowledge your growing feelings for Hayes' },
-        { id: 'choose_mysterious', text: 'Seek out the mysterious man to confess your feelings' },
+        { id: 'believe_lian', text: 'Believe her story - it explains too much' },
+        { id: 'remain_skeptical', text: 'Remain skeptical - demons are master manipulators' },
+        { id: 'demand_proof', text: 'Demand proof of her claims' },
       ]
     },
     9: {
-      title: "ACT III: The Betrayal - Kidnapped",
-      content: "Your choice hangs in the air, unspoken but decided, when the world tilts sideways. The mysterious man steps from shadow, but something is wrong—his eyes burn with an otherworldly light, and power radiates from him in waves that make your teeth ache. 'I'm sorry,' he says, and his voice carries harmonics that shouldn't exist in human throats. 'But you need to understand the truth.' Before you can react, darkness swallows you whole. When consciousness returns, you're somewhere impossible—a realm of obsidian spires and crimson skies, where the air itself whispers of ancient power and endless night. The mysterious man stands before you, but now you see him clearly: horns curving from his temple, wings folded against his back, and in his eyes, centuries of pain. 'Welcome to Diyu,' he says softly. 'Welcome to hell.'",
-      image: portalBgImage,
+      title: "Chapter 9 - The Yaoguai's Rage",
+      content: "The half-human, half-beast creature you corner in Shanghai is different from the others. His rage isn't mindless—it's focused, intelligent, heartbroken. 'You hunt us like animals,' he snarls in broken English, 'but we were your people once!' Through Min's translation, his story emerges: a peaceful mountain village that could commune with nature spirits. 'The gods called it 'corruption.' They chained us, twisted us, made us into the monsters they claimed we already were.' His partially human face contorts with grief. 'My wife... my children... they died in the transformation. Only I survived, and for what? To be hunted by their descendants?' Captain Lee's tactical team surrounds him, but you see something in the creature's eyes that makes you hesitate.",
+      image: brokenSealsBg,
       choices: [
-        { id: 'demand_answers', text: 'Demand to know why he deceived you' },
-        { id: 'try_escape', text: 'Look for a way to escape back to Earth' },
-        { id: 'stay_calm', text: 'Stay calm and try to understand the situation' },
+        { id: 'show_mercy', text: 'Show mercy - he\'s suffered enough' },
+        { id: 'capture_for_study', text: 'Capture him for further study' },
+        { id: 'end_suffering', text: 'End his suffering - death might be kindness' },
       ]
     },
     10: {
-      title: "The Demon King's Truth",
-      content: "The throne room stretches impossibly high, carved from black stone that pulses with its own malevolent life. Upon a throne of bone and shadow sits a figure that makes your mysterious savior look almost human by comparison. The Demon King's presence presses against your mind like a physical weight, and when he speaks, reality itself seems to listen. 'Child of the hunter bloodline,' his voice resonates through your bones, 'do you know what your ancestors really did?' Images flood your mind—not of demons as monsters, but as humans. Families torn apart, children screaming as divine chains drag them into darkness. 'We were people once. Enslaved by the gods your family served, transformed into the very monsters you hunt.' His eyes, ancient and terrible, bore into yours. 'Every demon you've slain was once someone's child, someone's parent, someone's love.'",
-      image: portalBgImage,
+      title: "Chapter 10 - Kai's True Nature Revealed",
+      content: "The confrontation comes when you're overwhelmed by a pack of desperate demons in Tokyo. As they close in, Kai appears—but this time, he doesn't hide what he is. Wings unfold from his back, dark and magnificent. His eyes burn with otherworldly power as he shields you from claws and fangs. 'Stay behind me,' he commands, his voice carrying harmonics that make reality shimmer. When the fighting ends, he turns to you, vulnerable despite his terrifying power. 'Now you know,' he says quietly. 'I am what you've been taught to hunt. I am the Demon Prince—but I was human once, long ago. My name was Kai, and I loved a mortal woman who looked... very much like you.'",
+      image: brokenSealsBg,
       choices: [
-        { id: 'reject_truth', text: 'Reject this version of history' },
-        { id: 'question_ancestors', text: 'Question everything you believed about your family' },
-        { id: 'ask_evidence', text: 'Demand proof of these claims' },
+        { id: 'accept_kai', text: 'Accept him - his protection has always been real' },
+        { id: 'feel_betrayed', text: 'Feel betrayed by his deception' },
+        { id: 'demand_truth', text: 'Demand the full truth about his past' },
       ]
     },
     11: {
-      title: "The Shrinking Prison",
-      content: "The Demon King gestures, and the walls of the throne room become transparent, revealing the true horror of Diyu. What you see breaks your heart: families huddled together in the dying light, children with small horns and frightened eyes, elderly demons whose human memories still shine in their faces. 'This realm is dying,' the king's voice cracks with millennia of grief. 'The gods' prison shrinks each day. Soon, there will be nothing left.' A small demon child approaches, tugging on your sleeve with claws that should terrify you but instead fill you with protective fury. She can't be more than seven, her eyes wide with innocent trust. 'Are you here to save us?' she whispers. The weight of genocide settles on your shoulders. If you do nothing, if you maintain the seals you helped create, an entire people—transformed but still fundamentally human—will die.",
-      image: portalBgImage,
+      title: "Chapter 11 - The Hulixian's Seduction",
+      content: "The nine-tailed fox demon is everything the legends say—breathtakingly beautiful, impossibly charismatic, and utterly dangerous. She appears in your hotel room in Beijing, lounging on your bed like she belongs there. 'Hello, little hunter,' she purrs, her voice like silk and honey. 'I am Meihua, and I have a proposition.' Her tails fan behind her hypnotically. 'You seek truth about the divine seals? I can give it to you—for a price.' She rises gracefully, her form shifting between devastatingly beautiful woman and fox spirit. 'I was a goddess once, worshipped and beloved. Until jealous celestials decided I was too 'close' to humanity.' Her eyes flash with ancient fury. 'They made me into this. But unlike the others, I learned to use what they made me.'",
+      image: brokenSealsBg,
       choices: [
-        { id: 'help_demons', text: 'Agree to help free the trapped souls' },
-        { id: 'find_alternative', text: 'Search for an alternative solution' },
-        { id: 'need_time', text: 'Ask for time to process this revelation' },
+        { id: 'make_deal', text: 'Make a deal with Meihua - her information could be crucial' },
+        { id: 'resist_seduction', text: 'Resist her seduction and refuse the deal' },
+        { id: 'negotiate_carefully', text: 'Negotiate carefully - she\'s too dangerous to trust fully' },
       ]
     },
     12: {
-      title: "The Choice That Changes Everything",
-      content: "Back on Earth, chaos reigns. Marcus paces his shop like a caged animal, ancient tomes scattered around him as he searches frantically for a way to reach you. His usual easy smile is gone, replaced by desperate determination. Hayes has mobilized every resource at his disposal, federal agents and supernatural units converging on known dimensional weak points. His controlled facade cracks as he barks orders, the professional mask slipping to reveal raw panic underneath. Neither knows about your revelation in Diyu, about the choice that now tears at your soul. The mysterious man—the Demon Prince—stands beside you, his deception laid bare but his feelings somehow still genuine. 'I saved you because I had to,' he admits quietly. 'But somewhere along the way, it became real.' The gods are your true enemies, he says. Your ancestors were deceived. Help break the chains, or remain their unwitting pawn forever. The child demon takes your hand, her small fingers trembling with hope and fear.",
-      image: portalBgImage,
+      title: "Chapter 12 - Team Fractures",
+      content: "The revelations are tearing your team apart. Captain Lee struggles with the implications—his entire career built on hunting people transformed against their will. 'If this is true,' he says, staring at case files with new eyes, 'then we're not law enforcement. We're... we're genocidal.' Min paces his shop, ancient texts scattered everywhere. 'My family taught me these charms to protect against demons. But if demons are just... traumatized humans...' His voice breaks. Meanwhile, Kai watches from the shadows, patient but pained. 'I should have told you sooner,' he says in your dreams. 'But would you have believed me? Would any of you?' The team you've grown to love is fracturing under the weight of impossible truth.",
+      image: brokenSealsBg,
       choices: [
-        { id: 'break_chains', text: 'Decide to help break the divine chains' },
-        { id: 'return_earth', text: 'Demand to return to Earth to think' },
-        { id: 'confront_prince', text: 'Confront the Demon Prince about his true feelings' },
+        { id: 'hold_team_together', text: 'Fight to hold the team together despite everything' },
+        { id: 'choose_side', text: 'Choose a side - the truth is too important' },
+        { id: 'seek_middle_ground', text: 'Seek middle ground - there has to be another way' },
+      ]
+    },
+    13: {
+      title: "Chapter 13 - The Ancient Massacre",
+      content: "Min discovers the truth in his grandfather's hidden journals—documents that predate the modern demon hunting families. The Chinese characters are faded but legible: detailed accounts of the 'Great Purification' during the Tang Dynasty. Village after village of people with spiritual gifts, systematically rounded up by celestial decree. 'They called us 'qi-touched,'' Min reads, his voice hollow. 'We could see spirits, heal with herbs, communicate with nature. The gods declared this 'demonic corruption.'' The illustrations show golden chains descending from heaven, transforming families into monsters before the eyes of their children. 'My ancestor... he helped them,' Min whispers, staring at his own hands. 'We've been unknowing executioners for generations.'",
+      image: brokenSealsBg,
+      choices: [
+        { id: 'comfort_min', text: 'Comfort Min - this isn\'t his fault' },
+        { id: 'focus_stopping_it', text: 'Focus on stopping it now, not past guilt' },
+        { id: 'research_more', text: 'Research more - there might be survivors' },
+      ]
+    },
+    14: {
+      title: "Chapter 14 - Captain Lee's Choice",
+      content: "Captain Lee stands before a mirror in his federal office, staring at commendations and photos from a distinguished career. His team waits for orders, but he can't speak. Everything he's believed, everything he's done—it's built on a lie so massive it threatens to crush him. 'Sir?' his lieutenant asks. 'The Seoul team is waiting for guidance on the portal situation.' Lee's reflection stares back, and for the first time, he sees not a protector but a tool of oppression. 'Stand down,' he says quietly. Then louder: 'All teams, stand down. We... we need to reevaluate our mission parameters.' His career is over. But maybe, for the first time in years, he's doing the right thing.",
+      image: brokenSealsBg,
+      choices: [
+        { id: 'support_lee', text: 'Support Lee\'s decision completely' },
+        { id: 'worry_consequences', text: 'Worry about the consequences of his choice' },
+        { id: 'plan_together', text: 'Plan your next moves together as a team' },
+      ]
+    },
+    15: {
+      title: "Chapter 15 - Kai's Memories",
+      content: "In your deepest dream yet, Kai shows you his true past. You stand beside him in ancient China, watching a young scholar named Kai laugh with friends at a mountain temple. He's studying Taoist philosophy, learning to see qi flows, falling in love with a village girl named Lian. 'I was twenty-three,' Kai's present voice whispers as you watch his past self. 'We thought we were blessed by the gods to see the spirit world so clearly.' The scene shifts: golden chains descending from heaven, celestial soldiers dragging away everyone Kai loved. 'They transformed me first, as punishment for teaching others to see qi. I watched them change Lian into a snake demon.' His voice breaks across millennia. 'I became their prince only by accepting the chains willingly, hoping to protect the others. But I failed them all.'",
+      image: brokenSealsBg,
+      choices: [
+        { id: 'comfort_kai', text: 'Comfort Kai - he\'s carried this pain for millennia' },
+        { id: 'ask_about_lian', text: 'Ask about Lian - is she the snake demon you met?' },
+        { id: 'plan_revenge', text: 'Plan revenge against the gods who did this' },
+      ]
+    },
+    16: {
+      title: "Chapter 16 - The Dying Realm",
+      content: "Kai brings you to the edge of the demon realm in a vision more real than any dream. What you see breaks your heart: a once-beautiful dimension now crumbling into nothing. Families huddle together as reality dissolves around them. Children with small horns and frightened eyes cling to parents who remember being human. The qi prison that holds them is contracting daily, crushing everything within. 'This is what your seals maintain,' Kai says, his voice heavy with grief. 'Not just imprisonment—slow execution. Every portal you close, every seal you strengthen, brings them closer to complete annihilation.' A small demon child approaches, her eyes wide with innocent hope. 'Are you here to save us, pretty lady?' she asks in perfect Mandarin. The weight of genocide settles on your shoulders.",
+      image: brokenSealsBg,
+      choices: [
+        { id: 'promise_help', text: 'Promise to help find a way to save them' },
+        { id: 'feel_overwhelmed', text: 'Feel overwhelmed by the magnitude of suffering' },
+        { id: 'seek_alternatives', text: 'Seek alternatives to both imprisonment and freedom' },
+      ]
+    },
+
+    // ACT III: CHOICE (Chapters 17-22)
+    17: {
+      title: "ACT III: Chapter 17 - The Summons",
+      content: "You wake from the vision to find your apartment surrounded by celestial light. Three figures in flowing robes and impossible beauty stand in your living room, their presence making the air itself sing with divine power. 'Demon Slayer,' their voices harmonize perfectly, 'you have been compromised by enemy influences. You will come with us for purification.' Min and Captain Lee burst through your door, weapons drawn, but their bullets pass harmlessly through the celestial beings. 'Choose now,' the lead figure intones. 'Serve heaven as your bloodline demands, or be cleansed of corruption forever.' Behind them, Kai's shadow writhes against the wall, unable to approach but radiating desperate fury.",
+      image: brokenSealsBg,
+      choices: [
+        { id: 'refuse_gods', text: 'Refuse the gods - your loyalty lies with the truth' },
+        { id: 'pretend_compliance', text: 'Pretend to comply to learn their plans' },
+        { id: 'demand_answers', text: 'Demand answers about the true history' },
+      ]
+    },
+    18: {
+      title: "Chapter 18 - Heavenly Court",
+      content: "The Heavenly Court is magnificent and terrible—a realm of perfect order where every surface gleams with oppressive purity. Before the Jade Emperor's throne, you stand trial for 'consorting with demonic influences.' The assembled gods are breathtaking and cold, their beauty unmarred by empathy. 'Your bloodline has served us faithfully for millennia,' the Jade Emperor intones, his voice like crystal bells. 'But you have been tainted by lies.' Around the court, you see other Hunter families—all bound by golden chains of obligation, their eyes vacant with forced loyalty. 'The demons are a plague,' he continues. 'Their existence threatens the cosmic order. You will help us complete the Final Purification, or join them in oblivion.'",
+      image: brokenSealsBg,
+      choices: [
+        { id: 'challenge_emperor', text: 'Challenge the Jade Emperor\'s authority' },
+        { id: 'play_for_time', text: 'Play for time - your friends are planning something' },
+        { id: 'accept_chains', text: 'Pretend to accept the binding chains' },
+      ]
+    },
+    19: {
+      title: "Chapter 19 - The Rescue",
+      content: "Just as golden chains descend toward you, reality explodes into chaos. Kai crashes through the heavenly barriers, his demonic power blazing like a dark star. Min follows, wielding Taoist talismans that actually wound celestial beings. Captain Lee brings federal weapons modified with Min's enchantments. 'Nobody takes our girl,' Min snarls in Portuguese, his protective fury magnificent. Lee's tactical precision cuts through divine ranks with lethal efficiency. 'Federal jurisdiction says these are crimes against humanity,' he barks, his weapon carving through celestial guards. But it's Kai who faces the Jade Emperor directly, centuries of pain and rage finally unleashed. 'You destroyed everything I loved,' he roars. 'Now face the monster you created!'",
+      image: brokenSealsBg,
+      choices: [
+        { id: 'fight_alongside', text: 'Fight alongside all three men as equals' },
+        { id: 'protect_weakest', text: 'Focus on protecting whoever needs it most' },
+        { id: 'target_emperor', text: 'Target the Jade Emperor - end this at the source' },
+      ]
+    },
+    20: {
+      title: "Chapter 20 - The Truth Weapon",
+      content: "In the climactic battle, Min reveals his secret weapon—not a charm or spell, but evidence. Recordings of demon testimonies, documentation of the ancient massacres, proof of the gods' systematic genocide broadcast across all realms simultaneously. 'The truth is the ultimate talisman,' he shouts over the chaos, his technical skills merging with Taoist power. Suddenly, every human Hunter family sees the reality of what they've been doing. The golden chains binding them weaken as free will reasserts itself. Captain Lee coordinates the rebellion with military efficiency, turning Hunter families against their divine masters. But the battle's turning point comes when you make your choice—not just between sides, but between the three men who've fought to save both you and an entire people.",
+      image: brokenSealsBg,
+      choices: [
+        { id: 'choose_min', text: 'Choose Min - his protection and innovation won your heart' },
+        { id: 'choose_lee', text: 'Choose Captain Lee - his honor and strength inspire you' },
+        { id: 'choose_kai', text: 'Choose Kai - your connection transcends time and species' },
+      ]
+    },
+    21: {
+      title: "Chapter 21 - New World Order",
+      content: "The aftermath reshapes everything. The Jade Emperor, stripped of his enslaved Hunters, retreats to pure celestial realms. The demon realm stabilizes as the dying qi prison transforms into a peaceful parallel dimension. Min establishes new protective wards that defend rather than imprison. Captain Lee leads a reformed supernatural investigation unit focused on justice rather than extermination. Kai works to heal the trauma of his people while building bridges between realms. Your choice of partner shapes how you help rebuild: Min's innovation creates new harmonies between realms, Lee's leadership establishes just laws for all beings, or Kai's ancient wisdom guides healing for both sides. But regardless of romance, all three remain your trusted allies in building a better world.",
+      image: brokenSealsBg,
+      choices: [
+        { id: 'focus_healing', text: 'Focus on healing the trauma across all realms' },
+        { id: 'establish_justice', text: 'Establish new systems of justice and protection' },
+        { id: 'build_bridges', text: 'Build lasting bridges between human and demon communities' },
+      ]
+    },
+    22: {
+      title: "Chapter 22 - Broken Seals, Mended Hearts",
+      content: "One year later, you stand where it all began—in Macau's narrow alleys, now patrolled by mixed teams of humans and reformed demons working together. The qi lines flow freely but safely, monitored by Min's new detection systems and protected by Captain Lee's reformed units. Former demons like Lian teach at integration centers, sharing their stories to prevent future tragedies. Kai, no longer hiding his nature, serves as an ambassador between realms. The seals are truly broken—not the prison walls, but the barriers of hatred and misunderstanding. Your chosen partner stands beside you, but all three men remain part of your extended family. The broken seals have mended hearts across species, and for the first time in millennia, both humans and demons can dream of genuine peace.",
+      image: brokenSealsBg,
+      choices: [
+        { id: 'continue_adventure', text: 'Continue your adventures in this new world' },
+        { id: 'start_family', text: 'Start building a family in this peaceful future' },
+        { id: 'teach_others', text: 'Teach the next generation about unity and understanding' },
       ]
     }
   };
@@ -257,7 +376,7 @@ const Index = () => {
         {/* Background */}
         <div 
           className="absolute inset-0 bg-cover bg-center"
-          style={{ backgroundImage: `url(${portalBgImage})` }}
+          style={{ backgroundImage: `url(${brokenSealsBg})` }}
         >
           <div className="absolute inset-0 gradient-fantasy opacity-80" />
         </div>
@@ -329,7 +448,7 @@ const Index = () => {
         {/* Background */}
         <div 
           className="absolute inset-0 bg-cover bg-center"
-          style={{ backgroundImage: `url(${portalBgImage})` }}
+          style={{ backgroundImage: `url(${brokenSealsBg})` }}
         >
           <div className="absolute inset-0 gradient-fantasy opacity-80" />
         </div>
@@ -390,14 +509,25 @@ const Index = () => {
             <StorySection
               title={storyContent[currentChapter]?.title || "To Be Continued..."}
               content={storyContent[currentChapter]?.content || "You've reached a pivotal moment in your journey. The truth about the demons, the gods, and your own family's legacy has shattered everything you thought you knew. Standing in Diyu with the Demon Prince beside you and the fate of two worlds in your hands, you must choose: Will you help break the divine chains and free the trapped souls, knowing it might endanger humanity? Will you find another way to save both worlds? Or will you trust in the bonds you've forged with Marcus and Hayes to find a solution together? The choice is yours, and the consequences will reshape the very fabric of reality. Your story continues in the next chapter of Portal Hearts..."}
-              image={storyContent[currentChapter]?.image || portalBgImage}
+              image={storyContent[currentChapter]?.image || brokenSealsBg}
               choices={storyContent[currentChapter]?.choices || []}
               onChoice={handleChoice}
             />
           </div>
         )}
 
-        {activeTab === 'characters' && (
+          {activeTab === 'characters' && (
+            <CharacterPage 
+              characters={characters} 
+              onCharacterSelect={handleCharacterSelect}
+            />
+          )}
+
+          {activeTab === 'bestiary' && (
+            <DemonBestiary encounteredDemons={encounteredDemons} />
+          )}
+
+          {activeTab === 'characters' && (
           <div className="max-w-6xl mx-auto">
             <div className="text-center mb-8">
               <h2 className="font-display font-bold text-3xl text-gradient-romantic mb-4">

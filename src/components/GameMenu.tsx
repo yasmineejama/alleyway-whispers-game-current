@@ -1,4 +1,4 @@
-import { Book, Users, Settings, Heart } from "lucide-react";
+import { Book, Users, Settings, Heart, BookOpen } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 interface GameMenuProps {
@@ -9,7 +9,8 @@ interface GameMenuProps {
 export const GameMenu = ({ activeTab, onTabChange }: GameMenuProps) => {
   const menuItems = [
     { id: 'story', label: 'Story', icon: Book },
-    { id: 'characters', label: 'Characters', icon: Users },
+    { id: 'characters', label: 'Bonds', icon: Users },
+    { id: 'bestiary', label: 'Bestiary', icon: BookOpen },
     { id: 'memories', label: 'Memories', icon: Heart },
     { id: 'settings', label: 'Settings', icon: Settings },
   ];
