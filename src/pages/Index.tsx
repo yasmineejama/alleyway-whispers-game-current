@@ -291,15 +291,12 @@ const Index = () => {
 
                   <div className="space-y-3 text-center">
                     <div>
-                      <h3 className="font-display font-semibold text-2xl text-white mb-2">
+                      <p className="font-bold text-2xl text-white mb-2">
                         {character.name}
-                      </h3>
-                      <p className="text-lg text-primary font-medium">{character.title}</p>
+                      </p>
+                      <p className="text-lg text-primary">{character.description}</p>
                     </div>
 
-                    <p className="text-sm text-white/80 line-clamp-3">
-                      {character.description}
-                    </p>
 
                     <Button 
                       variant="romantic" 
