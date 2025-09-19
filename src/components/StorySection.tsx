@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { ChevronRight, Play } from "lucide-react";
+import { ChevronRight, Play, ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 interface StoryChoice {
@@ -15,6 +15,7 @@ interface StorySectionProps {
   choices?: StoryChoice[];
   onChoice?: (choiceId: string) => void;
   onContinue?: () => void;
+  onBack?: () => void;
 }
 
 export const StorySection = ({ 
@@ -23,7 +24,8 @@ export const StorySection = ({
   image, 
   choices, 
   onChoice, 
-  onContinue 
+  onContinue,
+  onBack 
 }: StorySectionProps) => {
   const [selectedChoice, setSelectedChoice] = useState<string | null>(null);
 
@@ -34,6 +36,20 @@ export const StorySection = ({
 
   return (
     <div className="fade-in">
+      {/* Back Button */}
+      {onBack && (
+        <div className="mb-6">
+          <Button 
+            variant="ghost" 
+            onClick={onBack}
+            className="gap-2 hover:bg-primary/10 transition-all duration-200 hover:scale-105"
+          >
+            <ArrowLeft className="h-4 w-4" />
+            Back to Chapters
+          </Button>
+        </div>
+      )}
+
       {image && (
         <div className="relative aspect-video rounded-2xl overflow-hidden mb-6 shadow-[var(--shadow-mystical)]">
           <img 

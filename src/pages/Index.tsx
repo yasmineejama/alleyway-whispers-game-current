@@ -558,6 +558,7 @@ const Index = () => {
               image={storyContent[currentChapter]?.image || brokenSealsBg}
               choices={storyContent[currentChapter]?.choices || []}
               onChoice={handleChoice}
+              onBack={() => setShowChapterList(true)}
             />
           </div>
         )}
