@@ -42,15 +42,11 @@ export const CharacterCard = ({ character, onSelect }: CharacterCardProps) => {
 
         <div className="space-y-3">
           <div>
-            <h3 className="font-display font-semibold text-lg text-foreground">
+            <p className="font-bold">
               {character.name}
-            </h3>
-            <p className="text-sm text-primary font-medium">{character.title}</p>
+            </p>
+            <p>{character.description}</p>
           </div>
-
-          <p className="text-sm text-muted-foreground line-clamp-2">
-            {character.description}
-          </p>
 
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-1">
