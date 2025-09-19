@@ -6,6 +6,7 @@ import { StorySection } from "@/components/StorySection";
 import { LoadingScreen } from "@/components/LoadingScreen";
 import { CharacterPage } from "@/components/CharacterPage";
 import { DemonBestiary } from "@/components/DemonBestiary";
+import { ChapterList } from "@/components/ChapterList";
 import { Button } from "@/components/ui/button";
 import { Sparkles, Play } from "lucide-react";
 
@@ -22,10 +23,13 @@ const Index = () => {
   const [currentChapter, setCurrentChapter] = useState(1);
   const [gameStarted, setGameStarted] = useState(false);
   const [showCharacterSelection, setShowCharacterSelection] = useState(false);
+  const [showChapterList, setShowChapterList] = useState(false);
   const [selectedLoveInterest, setSelectedLoveInterest] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [encounteredDemons, setEncounteredDemons] = useState<string[]>([]);
   const [storyBranch, setStoryBranch] = useState<string>('main'); // For multiple storylines
+  const [unlockedChapters, setUnlockedChapters] = useState<number[]>([1]); // Start with Chapter 1 unlocked
+  const [completedChapters, setCompletedChapters] = useState<number[]>([]);
   
   // Love interest characters for selection
   const loveInterests = [
@@ -353,7 +357,9 @@ const Index = () => {
     }
     
     // Progress to next chapter
-    if (currentChapter < 12) {
+    if (currentChapter < 22) {
+      // Mark current chapter as completed
+      handleChapterComplete(currentChapter);
       setCurrentChapter(prev => prev + 1);
     }
   };
@@ -366,7 +372,31 @@ const Index = () => {
   const handleLoveInterestSelection = (characterId: string) => {
     setSelectedLoveInterest(characterId);
     setShowCharacterSelection(false);
+    setShowChapterList(true); // Show chapter list instead of starting game directly
+  };
+
+  const handleChapterSelect = (chapterId: number) => {
+    setCurrentChapter(chapterId);
+    setShowChapterList(false);
     setGameStarted(true);
+    
+    // Mark chapter as unlocked if not already
+    if (!unlockedChapters.includes(chapterId)) {
+      setUnlockedChapters(prev => [...prev, chapterId]);
+    }
+  };
+
+  const handleChapterComplete = (chapterId: number) => {
+    // Mark chapter as completed
+    if (!completedChapters.includes(chapterId)) {
+      setCompletedChapters(prev => [...prev, chapterId]);
+    }
+    
+    // Unlock next chapter
+    const nextChapter = chapterId + 1;
+    if (nextChapter <= 22 && !unlockedChapters.includes(nextChapter)) {
+      setUnlockedChapters(prev => [...prev, nextChapter]);
+    }
   };
 
   // Character Selection Screen
@@ -442,6 +472,22 @@ const Index = () => {
     );
   }
 
+  // Chapter List Screen
+  if (showChapterList) {
+    return (
+      <ChapterList 
+        unlockedChapters={unlockedChapters}
+        completedChapters={completedChapters}
+        currentChapter={currentChapter}
+        onChapterSelect={handleChapterSelect}
+        onBack={() => {
+          setShowChapterList(false);
+          setShowCharacterSelection(true);
+        }}
+      />
+    );
+  }
+
   if (!gameStarted) {
     return (
       <div className="min-h-screen relative overflow-hidden">
@@ -460,7 +506,7 @@ const Index = () => {
           </div>
           
           <h1 className="font-display font-bold text-5xl md:text-7xl text-white mb-4 drop-shadow-lg">
-            Portal Hearts
+            Broken Seals
           </h1>
           
           <p className="text-xl md:text-2xl text-white/90 mb-2 max-w-2xl">
