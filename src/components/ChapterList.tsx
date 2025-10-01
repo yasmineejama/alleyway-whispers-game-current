@@ -41,36 +41,37 @@ export const ChapterList = ({
         { id: 2, title: "Kai's First Appearance", description: "A mysterious savior emerges from shadows" },
         { id: 3, title: "Min's Charm Shop", description: "Ancient wisdom and protective talismans" },
         { id: 4, title: "Captain Lee's Arrival", description: "Federal forces take interest in your work" },
-        { id: 5, title: "The First Dream", description: "Visions reveal hidden truths about the past" },
-        { id: 6, title: "Building Bonds", description: "Growing closer to your mysterious allies" }
+        { id: 5, title: "Rescue at FIT", description: "Saving Jasmine from a demon at the fashion school" },
+        { id: 6, title: "The First Dream", description: "Visions reveal hidden truths about the past" },
+        { id: 7, title: "Building Bonds", description: "Growing closer to your mysterious allies" }
       ]
     },
     {
       title: "Act II: Revelation", 
       subtitle: "The truth behind the seals unfolds...",
       chapters: [
-        { id: 7, title: "The Portal Discovery", description: "Reality tears and ancient portals emerge" },
-        { id: 8, title: "Snake Demon's Testimony", description: "A demon reveals her tragic human past" },
-        { id: 9, title: "The Yaoguai's Rage", description: "Confronting a creature's heartbroken fury" },
-        { id: 10, title: "Kai's True Nature Revealed", description: "The Demon Prince shows his true form" },
-        { id: 11, title: "The Hulixian's Seduction", description: "A nine-tailed fox offers dangerous knowledge" },
-        { id: 12, title: "Team Fractures", description: "Truth threatens to tear your allies apart" },
-        { id: 13, title: "The Ancient Massacre", description: "Discovering the genocide behind demon creation" },
-        { id: 14, title: "Captain Lee's Choice", description: "A soldier faces the weight of truth" },
-        { id: 15, title: "Min's Heritage", description: "Uncovering your ally's conflicted bloodline" },
-        { id: 16, title: "The Demon Prince's Offer", description: "Kai proposes a dangerous alliance" }
+        { id: 8, title: "The Portal Discovery", description: "Reality tears and ancient portals emerge" },
+        { id: 9, title: "Snake Demon's Testimony", description: "A demon reveals her tragic human past" },
+        { id: 10, title: "The Yaoguai's Rage", description: "Confronting a creature's heartbroken fury" },
+        { id: 11, title: "Kai's Ancient Connection", description: "The mysterious guardian reveals his demonic nature" },
+        { id: 12, title: "The Hulixian's Seduction", description: "A nine-tailed fox offers dangerous knowledge" },
+        { id: 13, title: "Team Fractures", description: "Truth threatens to tear your allies apart" },
+        { id: 14, title: "The Ancient Massacre", description: "Discovering the genocide behind demon creation" },
+        { id: 15, title: "Captain Lee's Choice", description: "A soldier faces the weight of truth" },
+        { id: 16, title: "Kai's Memories", description: "Witnessing the tragic past of the demon prince" },
+        { id: 17, title: "The Dying Realm", description: "Seeing the crumbling demon dimension" }
       ]
     },
     {
       title: "Act III: Resolution",
       subtitle: "Choose the fate of two worlds...", 
       chapters: [
-        { id: 17, title: "Approaching Yanluo Wang", description: "Seeking audience with the Demon King" },
-        { id: 18, title: "The Celestial Confrontation", description: "Facing the gods who created this nightmare" },
-        { id: 19, title: "Breaking the Chains", description: "Attempting to free the enslaved souls" },
-        { id: 20, title: "The Final Battle", description: "War between heaven, hell, and humanity" },
-        { id: 21, title: "Love's True Test", description: "Your heart's choice shapes destiny" },
-        { id: 22, title: "New Beginnings", description: "The world remade by your decisions" }
+        { id: 18, title: "The Summons", description: "Celestial beings demand your obedience" },
+        { id: 19, title: "Heavenly Court", description: "Standing trial before the Jade Emperor" },
+        { id: 20, title: "The Rescue", description: "Your allies storm heaven itself" },
+        { id: 21, title: "The Truth Weapon", description: "Broadcasting the evidence of divine genocide" },
+        { id: 22, title: "New World Order", description: "Rebuilding a world without oppression" },
+        { id: 23, title: "Broken Seals, Mended Hearts", description: "A peaceful future for all beings" }
       ]
     }
   ];
@@ -85,7 +86,7 @@ export const ChapterList = ({
       description: baseChapter?.description || "",
       isUnlocked: unlockedChapters.includes(chapterId),
       isCompleted: completedChapters.includes(chapterId),
-      isNext: chapterId === nextUnlockedChapter && chapterId <= 22
+      isNext: chapterId === nextUnlockedChapter && chapterId <= 23
     };
   };
 
@@ -227,11 +228,11 @@ export const ChapterList = ({
         {/* Summary Stats */}
         <div className="mt-12 text-center space-y-2">
           <Badge variant="secondary" className="px-4 py-2">
-            {completedChapters.length} / 22 Chapters Completed
+            {completedChapters.length} / 23 Chapters Completed
           </Badge>
-          {currentChapter <= 22 && (
+          {currentChapter <= 23 && (
             <p className="text-sm text-muted-foreground">
-              Next: Chapter {Math.max(...unlockedChapters) + 1 <= 22 ? Math.max(...unlockedChapters) + 1 : 22}
+              Next: Chapter {Math.max(...unlockedChapters) + 1 <= 23 ? Math.max(...unlockedChapters) + 1 : 23}
             </p>
           )}
         </div>
