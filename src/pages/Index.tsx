@@ -7,8 +7,10 @@ import { LoadingScreen } from "@/components/LoadingScreen";
 import { CharacterPage } from "@/components/CharacterPage";
 import { DemonBestiary } from "@/components/DemonBestiary";
 import { ChapterList } from "@/components/ChapterList";
+import { CreditsSystem } from "@/components/CreditsSystem";
 import { Button } from "@/components/ui/button";
 import { Sparkles, Play } from "lucide-react";
+import { toast } from "sonner";
 
 // Import character images
 import mainCharacterImage from "@/assets/main-character.jpg";
@@ -17,6 +19,30 @@ import minSupplierImage from "@/assets/min-supplier.jpg";
 import kaiMysteriousImage from "@/assets/kai-mysterious.jpg";
 import brokenSealsBg from "@/assets/broken-seals-bg.jpg";
 import boneDemonImage from "@/assets/bone-demon.jpg";
+
+// Import chapter images
+import chapter1Image from "@/assets/chapter-1.jpg";
+import chapter2Image from "@/assets/chapter-2.jpg";
+import chapter3Image from "@/assets/chapter-3.jpg";
+import chapter4Image from "@/assets/chapter-4.jpg";
+import chapter5Image from "@/assets/chapter-5.jpg";
+import chapter6Image from "@/assets/chapter-6.jpg";
+import chapter7Image from "@/assets/chapter-7.jpg";
+import chapter8Image from "@/assets/chapter-8.jpg";
+import chapter9Image from "@/assets/chapter-9.jpg";
+import chapter10Image from "@/assets/chapter-10.jpg";
+import chapter11Image from "@/assets/chapter-11.jpg";
+import chapter12Image from "@/assets/chapter-12.jpg";
+import chapter13Image from "@/assets/chapter-13.jpg";
+import chapter14Image from "@/assets/chapter-14.jpg";
+import chapter15Image from "@/assets/chapter-15.jpg";
+import chapter16Image from "@/assets/chapter-16.jpg";
+import chapter17Image from "@/assets/chapter-17.jpg";
+import chapter18Image from "@/assets/chapter-18.jpg";
+import chapter19Image from "@/assets/chapter-19.jpg";
+import chapter20Image from "@/assets/chapter-20.jpg";
+import chapter21Image from "@/assets/chapter-21.jpg";
+import chapter22Image from "@/assets/chapter-22.jpg";
 
 const Index = () => {
   const [activeTab, setActiveTab] = useState('story');
@@ -30,6 +56,8 @@ const Index = () => {
   const [storyBranch, setStoryBranch] = useState<string>('main'); // For multiple storylines
   const [unlockedChapters, setUnlockedChapters] = useState<number[]>([1]); // Start with Chapter 1 unlocked
   const [completedChapters, setCompletedChapters] = useState<number[]>([]);
+  const [credits, setCredits] = useState(5); // Start with 5 free credits
+  const [lastCreditRefresh, setLastCreditRefresh] = useState(new Date());
   
   // Love interest characters for selection
   const loveInterests = [
@@ -92,11 +120,11 @@ const Index = () => {
       name: 'Kai',
       title: 'Timeless Guardian',
       image: kaiMysteriousImage,
-      description: 'A mysterious figure who appears 5,000 years old but looks timeless. East Asian with a handsome face and swimmer\'s build, he appears in your dreams and during critical moments.',
+      description: 'A mysterious figure of ancient origins. East Asian with a handsome face and swimmer\'s build, he appears in your dreams and during critical moments.',
       affection: 5,
       isUnlocked: true,
       relationship: 'Dangerous attraction. His ancient knowledge and protection come with hidden truths.',
-      age: '5,000 years old (appears timeless)',
+      age: 'Thousands of years old (appears timeless)',
       origin: 'Ancient East Asian entity of unknown origins'
     },
   ]);
@@ -105,8 +133,8 @@ const Index = () => {
     // ACT I: AWAKENING (Chapters 1-6)
     1: {
       title: "ACT I: Chapter 1 - The Bone Demon's Warning",
-      content: "The narrow alley behind Macau's glittering casinos reeks of decay and something far worse. Your silver dagger gleams as you corner the baigujing—its bone-white face contorting into a grotesque smile. 'You think you understand the hunt, little slayer?' it hisses, its voice like grinding glass. 'The qi lines grow weak. Soon, your precious world will learn the truth about the chains that bind us.' You lunge forward, but the demon dissolves into mist, leaving behind only strange, pulsing energy residue and whispers of forgotten sorrow.",
-      image: brokenSealsBg,
+      content: "The narrow alley behind Macau's glittering casinos reeks of decay and something far worse. Your silver dagger gleams as you corner the baigujing—its bone-white face contorting into a grotesque smile. 'You think you understand the hunt, little slayer?' it hisses, its voice like grinding glass. 'The qi lines grow weak. Soon, your precious world will learn the truth about the chains that bind us.' The demon's words echo with an unsettling sincerity, as if it's not threatening but warning. You've hunted dozens of demons before, but none have ever spoken with such... sadness. You lunge forward, but the demon dissolves into mist, leaving behind only strange, pulsing energy residue and whispers of forgotten sorrow. Something about this encounter feels different. Wrong. As if you're missing a crucial piece of the puzzle.",
+      image: chapter1Image,
       choices: [
         { id: 'examine_residue', text: 'Examine the strange qi energy residue carefully' },
         { id: 'chase_demon', text: 'Try to track where the demon went' },
@@ -115,8 +143,8 @@ const Index = () => {
     },
     2: {
       title: "Chapter 2 - Kai's First Appearance",
-      content: "As you kneel to examine the residue, shadows move at the alley's mouth. Three more baigujing emerge, their bone faces gleaming in the neon light. Your charms are nearly depleted from the first fight. As claws reach for your throat, a figure drops from above—silent, precise, deadly. He dispatches two demons before you can blink, movements almost too fast to follow. When you turn to thank him, piercing dark eyes meet yours for just a moment. 'The seals are breaking,' he whispers, his voice carrying an otherworldly resonance. 'Trust no one.' Then he melts back into the shadows.",
-      image: brokenSealsBg,
+      content: "As you kneel to examine the residue, shadows move at the alley's mouth. Three more baigujing emerge from the darkness, their bone faces gleaming in the neon light, drawn by the lingering qi of their fallen kin. Your charms are nearly depleted from the first fight, and you can feel exhaustion creeping into your limbs. This is bad—really bad. As skeletal claws reach for your throat, death seems inevitable. Then—a figure drops from above, silent as falling silk but deadly as a blade. He dispatches two demons before you can blink, movements almost too fast to follow, each strike precise and impossibly elegant. The third demon lunges at you, but he's already there, intercepting with inhuman speed. When you finally turn to thank him, piercing dark eyes meet yours for just a heartbeat—eyes that hold millennia of sorrow and fierce protection. 'The seals are breaking,' he whispers, his voice carrying an otherworldly resonance that makes your bones vibrate. 'Trust no one who claims to serve heaven.' Before you can ask what he means, he melts back into the shadows, leaving you with more questions than answers and a strange warmth where his hand briefly touched your shoulder.",
+      image: chapter2Image,
       choices: [
         { id: 'follow_kai', text: 'Try to follow the mysterious savior' },
         { id: 'analyze_technique', text: 'Analyze his fighting technique - it seemed ancient' },
@@ -125,8 +153,8 @@ const Index = () => {
     },
     3: {
       title: "Chapter 3 - Min's Charm Shop",
-      content: "Min's shop smells like sage and old incense. Ancient Taoist talismans hang from every surface, and the air hums with protective qi. He looks up from inscribing a charm, that characteristic wicked grin spreading across his broad shoulders. 'Let me guess—used up all your demon-catching charms on some nasty baigujing?' His Portuguese-accented Cantonese is warm with concern. 'You know I worry when you come in looking like you've been through a blender, querida.' He slides stronger charms across the counter. 'These are infused with genuine Mazu blessings. But something's wrong with the qi flow lately...'",
-      image: brokenSealsBg,
+      content: "Min's shop smells like sage, sandalwood, and old incense—comforting scents that wrap around you like a warm embrace after the night's terrors. Ancient Taoist talismans hang from every surface, their inscriptions glowing faintly with protective qi. The air hums with carefully maintained spiritual energy. He looks up from inscribing a charm, those broad shoulders hunched over delicate work, and that characteristic wicked grin spreading across his handsome face when he sees you. 'Let me guess—used up all your demon-catching charms on some nasty baigujing?' His Portuguese-accented Cantonese is warm with genuine concern despite the teasing tone. 'You know I worry when you come in looking like you've been through a blender, querida.' He slides stronger charms across the counter, fingers lingering near yours for just a moment. 'These are infused with genuine Mazu blessings from the A-Ma Temple. But...' His expression turns serious, troubled. 'Something's wrong with the qi flow lately. The ley lines—the qi lines—they're destabilizing. I've never seen anything like it in three generations of my family's records.' He shows you his detection instruments, the needles swinging wildly. 'Whatever's happening, it's big. And it scares me.'",
+      image: chapter3Image,
       choices: [
         { id: 'flirt_min', text: 'Appreciate his protective concern - and his smile' },
         { id: 'ask_qi_lines', text: 'Ask him about the disrupted qi lines' },
@@ -135,8 +163,8 @@ const Index = () => {
     },
     4: {
       title: "Chapter 4 - Captain Lee's Arrival",
-      content: "Your apartment building's lobby feels different when you drag yourself home. A stranger in a sharp federal suit leans against the mailboxes, and you instinctively reach for your silver blade. Then you notice the badge glinting under fluorescent lights. 'Easy,' he says, raising his hands. His voice carries military authority. 'Captain Lee, Supernatural Investigation Unit.' His steel-gray eyes assess you professionally. 'You're the demon hunter active in Macau. We need to talk. Supernatural activity has spiked 400% worldwide in the last month. My unit is taking point.' He straightens to his full, imposing height. 'Question is: are you going to cooperate, or do I make this official?'",
-      image: brokenSealsBg,
+      content: "Your apartment building's lobby feels different when you drag yourself home at 3 AM, exhausted and bruised. A stranger in black tactical fatigues leans against the mailboxes with the casual confidence of someone who owns every space he enters, and you instinctively reach for your silver blade. Then you notice the badge glinting under harsh fluorescent lights—federal, but with symbols you don't recognize. Supernatural division? 'Easy,' he says, raising his hands slowly, palms out. His voice carries natural military authority—the kind you can't fake, earned through real command. 'Captain Lee, Supernatural Investigation Unit.' His steel-gray eyes assess you with professional thoroughness, taking in your weapons, your defensive stance, the demon blood still staining your jacket. 'You're the demon hunter active in Macau. We need to talk. Supernatural activity has spiked 400% worldwide in the last month—portals opening, demons manifesting in broad daylight, civilian casualties climbing.' He straightens to his full, imposing height, somehow making the cramped lobby feel smaller. 'My unit is taking point on global coordination. Question is: are you going to cooperate and help us save lives, or do I have to make this official with warrants and surveillance?' Despite the threat, something in his eyes suggests he'd rather have you as an ally.",
+      image: chapter4Image,
       choices: [
         { id: 'cooperate_lee', text: 'Agree to cooperate - you need his resources' },
         { id: 'resist_authority', text: 'Resist - you work alone for good reasons' },
@@ -145,8 +173,8 @@ const Index = () => {
     },
     5: {
       title: "Chapter 5 - The First Dream",
-      content: "That night, your dreams are unlike any before. You stand in a realm of impossible beauty—ancient Chinese gardens with qi flowing visibly through crystal streams. Kai appears beside you, no longer hiding his otherworldly nature. His presence feels both protective and ancient. 'The gods lied to your ancestors,' he says softly, his hand almost touching yours. 'We were not always demons. Once, we were human—until divine chains transformed love into monstrosity.' In the dream, you see flashes of families torn apart, children screaming as golden chains drag them into darkness. 'The seals are weakening because the prisoners are dying. When they're gone...' You wake with tears on your cheeks.",
-      image: brokenSealsBg,
+      content: "That night, your dreams are unlike any before—vivid, tangible, impossibly real. You stand in a realm of impossible beauty: ancient Chinese gardens where qi flows visibly through crystal streams like liquid starlight, where cherry blossoms fall upward, where the very air shimmers with magic. It's breathtaking and terrifying in equal measure. Kai appears beside you, no longer hiding in shadows or wearing the mask of mere humanity. His presence feels both protective and ancient, like standing next to a mountain that's learned to walk. 'This is the realm between,' he says softly, his hand almost touching yours, close enough to feel his warmth but maintaining respectful distance. 'Here, I can speak truth without divine observers.' His voice carries pain that spans centuries. 'The demons you hunt—they were human once. Thousands of years ago, people with gifts like yours: they could see spirits, heal with herbs, commune with nature, sense qi flows. The gods called this corruption and demonic taint, but it was just... difference. Human potential that threatened divine control.' In the dream, you see flashes of memory: families with glowing hands healing the sick, children laughing as they played with friendly spirits, villages living in harmony with the supernatural world. Then golden chains descending from heaven, screams of agony as divine magic twists human souls into monsters, parents forced to watch their children transform. 'I was one of the first taken,' Kai whispers, and you can hear millennia of guilt in his voice. 'I tried to protect my village. Instead, I became what they feared most.' You wake with tears on your cheeks and the phantom sensation of his hand finally touching yours, grounding you before the nightmare consumed you.",
+      image: chapter5Image,
       choices: [
         { id: 'trust_dream', text: 'Trust the dream vision - it felt too real to be false' },
         { id: 'question_dream', text: 'Question everything - dreams can be manipulations' },
@@ -479,7 +507,7 @@ const Index = () => {
         unlockedChapters={unlockedChapters}
         completedChapters={completedChapters}
         currentChapter={currentChapter}
-        onChapterSelect={handleChapterSelect}
+        onChapterSelect={handleChapterSelectWithCredits}
         onBack={() => {
           setShowChapterList(false);
           setShowCharacterSelection(true);
@@ -542,14 +570,46 @@ const Index = () => {
     );
   }
 
+  // Check and refresh credits daily
+  useEffect(() => {
+    const now = new Date();
+    const lastRefresh = new Date(lastCreditRefresh);
+    if (now.getDate() !== lastRefresh.getDate()) {
+      setCredits(5);
+      setLastCreditRefresh(now);
+      toast.success("Your daily 5 credits have been refreshed!");
+    }
+  }, [lastCreditRefresh]);
+
+  const handlePurchaseCredits = (amount: number) => {
+    setCredits(prev => prev + amount);
+    toast.success(`Successfully purchased ${amount} credits!`);
+  };
+
+  const handleChapterSelectWithCredits = (chapterId: number) => {
+    if (chapterId === 1 || completedChapters.includes(chapterId)) {
+      handleChapterSelect(chapterId);
+    } else if (credits >= 1) {
+      setCredits(prev => prev - 1);
+      handleChapterSelect(chapterId);
+      toast.success("Chapter unlocked! 1 credit used.");
+    } else {
+      toast.error("Not enough credits! Purchase more or wait for daily refresh.");
+    }
+  };
+
   return (
     <div className="min-h-screen pb-20">
       <GameHeader 
-        title="Portal Hearts" 
+        title="Broken Seals"
         chapter={storyContent[currentChapter]?.title || `Chapter ${currentChapter}`}
       />
       
       <main className="pt-20 container mx-auto px-4 py-8">
+        <div className="flex justify-end mb-4">
+          <CreditsSystem credits={credits} onPurchase={handlePurchaseCredits} />
+        </div>
+        
         {activeTab === 'story' && (
           <div className="max-w-4xl mx-auto">
             <StorySection
