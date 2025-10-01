@@ -427,6 +427,34 @@ const Index = () => {
     }
   };
 
+  const handlePurchaseCredits = (amount: number) => {
+    setCredits(prev => prev + amount);
+    toast.success(`Successfully purchased ${amount} credits!`);
+  };
+
+  const handleChapterSelectWithCredits = (chapterId: number) => {
+    if (chapterId === 1 || completedChapters.includes(chapterId)) {
+      handleChapterSelect(chapterId);
+    } else if (credits >= 1) {
+      setCredits(prev => prev - 1);
+      handleChapterSelect(chapterId);
+      toast.success("Chapter unlocked! 1 credit used.");
+    } else {
+      toast.error("Not enough credits! Purchase more or wait for daily refresh.");
+    }
+  };
+
+  // Check and refresh credits daily
+  useEffect(() => {
+    const now = new Date();
+    const lastRefresh = new Date(lastCreditRefresh);
+    if (now.getDate() !== lastRefresh.getDate()) {
+      setCredits(5);
+      setLastCreditRefresh(now);
+      toast.success("Your daily 5 credits have been refreshed!");
+    }
+  }, [lastCreditRefresh]);
+
   // Character Selection Screen
   if (showCharacterSelection) {
     return (
@@ -569,34 +597,6 @@ const Index = () => {
       </div>
     );
   }
-
-  // Check and refresh credits daily
-  useEffect(() => {
-    const now = new Date();
-    const lastRefresh = new Date(lastCreditRefresh);
-    if (now.getDate() !== lastRefresh.getDate()) {
-      setCredits(5);
-      setLastCreditRefresh(now);
-      toast.success("Your daily 5 credits have been refreshed!");
-    }
-  }, [lastCreditRefresh]);
-
-  const handlePurchaseCredits = (amount: number) => {
-    setCredits(prev => prev + amount);
-    toast.success(`Successfully purchased ${amount} credits!`);
-  };
-
-  const handleChapterSelectWithCredits = (chapterId: number) => {
-    if (chapterId === 1 || completedChapters.includes(chapterId)) {
-      handleChapterSelect(chapterId);
-    } else if (credits >= 1) {
-      setCredits(prev => prev - 1);
-      handleChapterSelect(chapterId);
-      toast.success("Chapter unlocked! 1 credit used.");
-    } else {
-      toast.error("Not enough credits! Purchase more or wait for daily refresh.");
-    }
-  };
 
   return (
     <div className="min-h-screen pb-20">
